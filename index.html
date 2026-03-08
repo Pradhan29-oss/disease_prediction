@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MediPredict AI — Disease Prediction System</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#f5f8ff;--bg2:#ffffff;--bg3:#eef3fb;--surface:#ffffff;
+  --border:rgba(10,36,99,0.10);
+  --blue:#1a56c4;--blue-d:#0a2463;--blue-l:#e8f1fd;
+  --teal:#0b9a8a;--teal-l:#e0f5f2;
+  --red:#dc3a3a;--red-l:#fff0f0;
+  --green:#16a34a;--green-l:#f0fdf4;
+  --txt:#0d1b2a;--txt2:#4a5e72;--txt3:#8899aa;
+  --shadow:0 4px 30px rgba(10,36,99,0.08);
+  --shadow-lg:0 12px 50px rgba(10,36,99,0.14);
+  --radius:16px;--nav-h:68px;
+}
+[data-theme="dark"]{
+  --bg:#0d1117;--bg2:#161b24;--bg3:#1c2333;--surface:#1c2333;
+  --border:rgba(255,255,255,0.08);
+  --blue:#4d8cf5;--blue-d:#7eb3ff;--blue-l:rgba(77,140,245,0.12);
+  --teal:#2dd4bf;--teal-l:rgba(45,212,191,0.10);
+  --red:#f87171;--red-l:rgba(248,113,113,0.10);
+  --green:#4ade80;--green-l:rgba(74,222,128,0.10);
+  --txt:#e8edf5;--txt2:#8899aa;--txt3:#4a5e72;
+  --shadow:0 4px 30px rgba(0,0,0,0.3);
+  --shadow-lg:0 12px 50px rgba(0,0,0,0.4);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);transition:background .3s,color .3s;overflow-x:hidden;line-height:1.6}
+a{text-decoration:none;color:inherit}
+button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:none}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:var(--blue);border-radius:10px}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;padding:0 5%;background:rgba(255,255,255,0.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);transition:background .3s}
+[data-theme="dark"] nav{background:rgba(13,17,23,0.88)}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-size:1.35rem;color:var(--blue-d)}
+.nav-logo span{color:var(--teal)}
+.logo-icon{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--teal));display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.1rem}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{font-size:.875rem;font-weight:500;color:var(--txt2);transition:color .2s}
+.nav-links a:hover{color:var(--blue)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.theme-btn{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--bg3);color:var(--txt2);font-size:1rem;border:1px solid var(--border);transition:all .2s}
+.theme-btn:hover{background:var(--blue-l);color:var(--blue)}
+.nav-cta{padding:9px 20px;border-radius:10px;font-size:.875rem;font-weight:600;background:linear-gradient(135deg,var(--blue),var(--teal));color:#fff;transition:opacity .2s,transform .2s}
+.nav-cta:hover{opacity:.88;transform:translateY(-1px)}
+.ham{display:none;flex-direction:column;gap:5px;padding:4px}
+.ham span{display:block;height:2px;width:22px;background:var(--txt);border-radius:2px;transition:all .3s}
+.mob-menu{display:none;position:fixed;top:var(--nav-h);left:0;right:0;z-index:199;background:var(--surface);border-bottom:1px solid var(--border);padding:16px 5%;flex-direction:column;gap:4px}
+.mob-menu.open{display:flex}
+.mob-menu a{padding:10px 0;font-size:.95rem;color:var(--txt2);border-bottom:1px solid var(--border)}
+
+/* HERO */
+.hero{min-height:100vh;background:linear-gradient(145deg,#0a2463 0%,#1a56c4 52%,#0b9a8a 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:calc(var(--nav-h)+60px) 5% 80px;position:relative;overflow:hidden}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:50px 50px}
+.glow1{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(45,212,191,.18),transparent 70%);top:-100px;right:-80px;pointer-events:none}
+.glow2{position:absolute;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(77,140,245,.18),transparent 70%);bottom:-80px;left:-60px;pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:#fff;padding:7px 18px;border-radius:50px;font-size:.8rem;font-weight:500;margin-bottom:28px;backdrop-filter:blur(8px);animation:fadeDown .8s ease both}
+.badge-dot{width:7px;height:7px;border-radius:50%;background:#2dd4bf;animation:pulse 2s infinite}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(2.4rem,6vw,4.8rem);color:#fff;line-height:1.1;margin-bottom:22px;animation:fadeDown .9s .1s ease both}
+.hero h1 em{font-style:italic;color:#7ee8e0}
+.hero-sub{max-width:560px;color:rgba(255,255,255,.78);font-size:1.05rem;line-height:1.75;margin-bottom:40px;animation:fadeDown 1s .2s ease both}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;animation:fadeDown 1s .3s ease both}
+.btn-solid{padding:13px 30px;border-radius:10px;font-weight:600;font-size:.95rem;background:#fff;color:var(--blue-d);box-shadow:0 4px 20px rgba(0,0,0,.2);transition:transform .2s,box-shadow .2s}
+.btn-solid:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.25)}
+.btn-ghost{padding:13px 30px;border-radius:10px;font-weight:500;font-size:.95rem;border:1.5px solid rgba(255,255,255,.4);color:#fff;transition:background .2s}
+.btn-ghost:hover{background:rgba(255,255,255,.1)}
+.hero-nums{display:flex;gap:48px;margin-top:64px;flex-wrap:wrap;justify-content:center;animation:fadeUp 1s .4s ease both}
+.hnum{text-align:center;color:#fff}
+.hnum-val{font-family:'Fraunces',serif;font-size:2.4rem;color:#7ee8e0;line-height:1}
+.hnum-lbl{font-size:.76rem;color:rgba(255,255,255,.6);margin-top:4px;text-transform:uppercase;letter-spacing:.06em}
+
+/* SECTIONS */
+section{padding:88px 5%}
+.stag{display:inline-block;padding:5px 14px;border-radius:50px;background:var(--blue-l);color:var(--blue);font-size:.74rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
+.stitle{font-family:'Fraunces',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:var(--blue-d);line-height:1.15;margin-bottom:12px}
+.ssub{color:var(--txt2);font-size:.94rem;line-height:1.75;max-width:520px}
+.center{text-align:center}
+.center .ssub{margin:0 auto}
+
+/* HOW */
+#how{background:var(--bg2)}
+.steps-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:22px;margin-top:50px}
+.step-c{background:var(--surface);border-radius:var(--radius);padding:30px 24px;border:1px solid var(--border);position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s}
+.step-c:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
+.step-bg{position:absolute;top:-8px;right:12px;font-family:'Fraunces',serif;font-size:5rem;color:var(--blue-l);line-height:1;pointer-events:none}
+[data-theme="dark"] .step-bg{color:rgba(77,140,245,.07)}
+.step-ico{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:14px}
+.ib{background:var(--blue-l)} .it{background:var(--teal-l)}
+.step-c h3{font-size:.98rem;font-weight:600;color:var(--txt);margin-bottom:7px}
+.step-c p{font-size:.83rem;color:var(--txt2);line-height:1.65}
+
+/* STATS */
+#stats{background:var(--bg)}
+.acc-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;margin-top:50px}
+.acc-c{border-radius:20px;padding:30px;border:1px solid var(--border);transition:transform .3s,box-shadow .3s}
+.acc-c:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
+.ab{background:var(--blue-l)} .ar{background:var(--red-l)} .at{background:var(--teal-l)}
+.acc-c h3{font-family:'Fraunces',serif;font-size:1.2rem;margin-bottom:6px}
+.ab h3{color:var(--blue)} .ar h3{color:var(--red)} .at h3{color:var(--teal)}
+.acc-c p{font-size:.82rem;color:var(--txt2);margin-bottom:18px;line-height:1.6}
+.blbl{display:flex;justify-content:space-between;font-size:.8rem;font-weight:600;color:var(--txt);margin-bottom:6px}
+.btrack{height:8px;border-radius:50px;background:rgba(255,255,255,.5);overflow:hidden}
+[data-theme="dark"] .btrack{background:rgba(255,255,255,.1)}
+.bfill{height:100%;border-radius:50px;animation:fillBar 1.6s .4s ease both}
+.ab .bfill{background:var(--blue)} .ar .bfill{background:var(--red)} .at .bfill{background:var(--teal)}
+.fl{list-style:none;margin-top:14px}
+.fl li{font-size:.79rem;color:var(--txt2);padding:2px 0;display:flex;align-items:center;gap:6px}
+.fl li::before{content:'›';font-size:1rem;color:var(--blue);font-weight:700}
+
+/* PREDICT */
+#predict{background:var(--bg2)}
+.tabs{display:flex;gap:10px;margin-top:44px;flex-wrap:wrap}
+.tab{padding:10px 24px;border-radius:10px;font-size:.875rem;font-weight:600;background:var(--bg3);color:var(--txt2);border:1.5px solid transparent;transition:all .25s}
+.tab:hover{background:var(--blue-l);color:var(--blue)}
+.td{background:var(--blue-l);color:var(--blue);border-color:var(--blue)}
+.th{background:var(--red-l);color:var(--red);border-color:var(--red)}
+.tp{background:var(--teal-l);color:var(--teal);border-color:var(--teal)}
+.panel{display:none;margin-top:26px}
+.panel.active{display:block;animation:fadeUp .35s ease}
+.pcard{background:var(--surface);border-radius:20px;padding:36px 38px;border:1px solid var(--border);box-shadow:var(--shadow)}
+.pcard h3{font-family:'Fraunces',serif;font-size:1.55rem;color:var(--txt);margin-bottom:5px}
+.pcard>p{font-size:.84rem;color:var(--txt2);margin-bottom:26px}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:15px}
+.field label{display:block;font-size:.73rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--txt2);margin-bottom:5px}
+.field input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.9rem;color:var(--txt);background:var(--bg3);outline:none;transition:border-color .2s,box-shadow .2s;font-family:'DM Sans',sans-serif}
+.field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,196,.1);background:var(--surface)}
+.hint{font-size:.7rem;color:var(--txt3);margin-top:3px}
+.pbtn{margin-top:24px;width:100%;padding:14px;border-radius:12px;font-size:.95rem;font-weight:700;color:#fff;letter-spacing:.02em;transition:opacity .2s,transform .2s}
+.pbtn:hover{opacity:.88;transform:translateY(-1px)}
+.pbd{background:linear-gradient(135deg,var(--blue),#3b82f6)}
+.pbh{background:linear-gradient(135deg,var(--red),#f87171)}
+.pbp{background:linear-gradient(135deg,var(--teal),#14b8a6)}
+.loader{display:none;text-align:center;padding:20px;color:var(--txt2);font-size:.875rem}
+.loader.on{display:block}
+.spin{width:26px;height:26px;border-radius:50%;border:3px solid var(--blue-l);border-top-color:var(--blue);animation:spin .8s linear infinite;margin:0 auto 10px}
+.res{display:none;margin-top:20px;border-radius:14px;padding:20px 24px;border:1.5px solid transparent}
+.res.on{display:flex;align-items:center;gap:16px;animation:fadeUp .35s ease}
+.res.pos{background:var(--red-l);border-color:rgba(220,58,58,.2)}
+.res.neg{background:var(--green-l);border-color:rgba(22,163,74,.2)}
+.res-ico{font-size:2.2rem}
+.rt{font-size:1.05rem;font-weight:700;margin-bottom:4px}
+.res.pos .rt{color:var(--red)} .res.neg .rt{color:var(--green)}
+.rd{font-size:.82rem;color:var(--txt2);line-height:1.5}
+.rc{font-size:.78rem;font-weight:600;margin-top:4px}
+.res.pos .rc{color:var(--red)} .res.neg .rc{color:var(--green)}
+
+/* HISTORY */
+#history{background:var(--bg)}
+.htop{display:flex;justify-content:space-between;align-items:center;margin-top:44px;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.htop h3{font-family:'Fraunces',serif;font-size:1.2rem;color:var(--txt)}
+.clr-btn{padding:7px 16px;border-radius:8px;font-size:.79rem;font-weight:600;background:var(--red-l);color:var(--red);border:1px solid rgba(220,58,58,.2);transition:background .2s}
+.clr-btn:hover{background:rgba(220,58,58,.15)}
+.hempty{text-align:center;padding:56px 20px;color:var(--txt3);font-size:.9rem;background:var(--surface);border-radius:var(--radius);border:1.5px dashed var(--border)}
+.hempty span{font-size:2.2rem;display:block;margin-bottom:10px}
+.hlist{display:flex;flex-direction:column;gap:11px}
+.hi{background:var(--surface);border-radius:12px;padding:15px 18px;border:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-wrap:wrap;transition:box-shadow .2s}
+.hi:hover{box-shadow:var(--shadow)}
+.hbadge{padding:4px 12px;border-radius:50px;font-size:.73rem;font-weight:700;white-space:nowrap}
+.hbadge.n{background:var(--green-l);color:var(--green)}
+.hbadge.p{background:var(--red-l);color:var(--red)}
+.hinfo{flex:1;min-width:0}
+.hn{font-size:.88rem;font-weight:600;color:var(--txt)}
+.hm{font-size:.76rem;color:var(--txt3);margin-top:2px}
+.hc{font-size:.79rem;font-weight:600;color:var(--txt2);white-space:nowrap}
+
+/* ABOUT */
+#about{background:var(--bg2)}
+.about-g{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;margin-top:50px}
+.about-t h2{font-family:'Fraunces',serif;font-size:2rem;color:var(--txt);margin-bottom:16px}
+.about-t p{color:var(--txt2);font-size:.92rem;line-height:1.8;margin-bottom:13px}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.pill{padding:6px 14px;border-radius:50px;font-size:.77rem;font-weight:600}
+.pb{background:var(--blue-l);color:var(--blue)}
+.pt{background:var(--teal-l);color:var(--teal)}
+.pg{background:var(--bg3);color:var(--txt2)}
+.about-card{background:linear-gradient(145deg,#0a2463,#0b9a8a);border-radius:22px;padding:36px;color:#fff;position:relative;overflow:hidden}
+.about-card::before{content:'';position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.05);top:-60px;right:-60px}
+.about-card h3{font-family:'Fraunces',serif;font-size:1.35rem;margin-bottom:20px}
+.mrow{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+.mrow:last-child{border-bottom:none}
+.ml{font-size:.87rem;color:rgba(255,255,255,.7)}
+.mv{font-family:'Fraunces',serif;font-size:1.2rem;color:#7ee8e0}
+
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:38px 5%;text-align:center}
+.flogo{font-family:'Fraunces',serif;font-size:1.25rem;color:var(--blue);margin-bottom:9px}
+.flogo span{color:var(--teal)}
+footer p{font-size:.81rem;color:var(--txt3);line-height:1.8}
+.fwarn{display:inline-block;margin-top:12px;font-size:.73rem;color:var(--txt3);background:var(--bg3);padding:6px 16px;border-radius:50px}
+
+/* ANIMATIONS */
+@keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp  {from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)}}
+@keyframes fillBar {from{width:0}}
+@keyframes spin    {to{transform:rotate(360deg)}}
+@keyframes pulse   {0%,100%{opacity:1}50%{opacity:.4}}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .6s ease,transform .6s ease}
+.reveal.vis{opacity:1;transform:translateY(0)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .about-g{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .ham{display:flex}
+  .pcard{padding:22px 18px}
+}
+@media(max-width:580px){
+  section{padding:60px 4%}
+  .hero{padding:calc(var(--nav-h)+48px) 4% 56px}
+  .hero-nums{gap:24px}
+  .fgrid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:380px){.fgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo"><div class="logo-icon">✚</div>Medi<span>Predict</span></a>
+  <ul class="nav-links">
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#stats">Accuracy</a></li>
+    <li><a href="#predict">Predict</a></li>
+    <li><a href="#history">History</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-btn" id="tbtn" onclick="toggleTheme()">🌙</button>
+    <a href="#predict" class="nav-cta">Try Now →</a>
+    <button class="ham" onclick="toggleMob()" id="hbtn"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mob-menu" id="mmenu">
+  <a href="#how"     onclick="closeMob()">How It Works</a>
+  <a href="#stats"   onclick="closeMob()">Accuracy</a>
+  <a href="#predict" onclick="closeMob()">Predict</a>
+  <a href="#history" onclick="closeMob()">History</a>
+  <a href="#about"   onclick="closeMob()">About</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div><div class="glow1"></div><div class="glow2"></div>
+  <div class="hero-badge"><span class="badge-dot"></span> AI-Powered Clinical Prediction System</div>
+  <h1>Predict Disease with<br/><em>Machine Learning</em></h1>
+  <p class="hero-sub">Enter patient data and get instant AI predictions for Diabetes, Heart Disease, and Parkinson's — trained on real clinical datasets using Random Forest classifiers.</p>
+  <div class="hero-btns">
+    <a href="#predict" class="btn-solid">Start Predicting</a>
+    <a href="#stats"   class="btn-ghost">View Accuracy ↓</a>
+  </div>
+  <div class="hero-nums">
+    <div class="hnum"><div class="hnum-val">3</div><div class="hnum-lbl">Disease Models</div></div>
+    <div class="hnum"><div class="hnum-val">94%</div><div class="hnum-lbl">Best Accuracy</div></div>
+    <div class="hnum"><div class="hnum-val">43</div><div class="hnum-lbl">Total Features</div></div>
+    <div class="hnum"><div class="hnum-val">.pkl</div><div class="hnum-lbl">Joblib Format</div></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="center">
+    <span class="stag">Process</span>
+    <h2 class="stitle reveal">How It Works</h2>
+    <p class="ssub reveal">A simple 4-step pipeline from patient input to AI prediction.</p>
+  </div>
+  <div class="steps-g">
+    <div class="step-c reveal"><div class="step-bg">1</div><div class="step-ico ib">📋</div><h3>Enter Patient Data</h3><p>Fill in clinical values like glucose, blood pressure, age and other medical measurements.</p></div>
+    <div class="step-c reveal"><div class="step-bg">2</div><div class="step-ico it">⚙️</div><h3>Data Preprocessing</h3><p>StandardScaler normalizes all input values to match the model's training distribution.</p></div>
+    <div class="step-c reveal"><div class="step-bg">3</div><div class="step-ico ib">🌲</div><h3>Random Forest</h3><p>100 decision trees analyze the data and vote together for the final prediction result.</p></div>
+    <div class="step-c reveal"><div class="step-bg">4</div><div class="step-ico it">📊</div><h3>Instant Result</h3><p>See the prediction with confidence score and probability breakdown for each class.</p></div>
+  </div>
+</section>
+
+<!-- ACCURACY -->
+<section id="stats">
+  <div class="center">
+    <span class="stag">Performance</span>
+    <h2 class="stitle reveal">Model Accuracy</h2>
+    <p class="ssub reveal">All 3 models trained using scikit-learn RandomForestClassifier on real clinical datasets.</p>
+  </div>
+  <div class="acc-g">
+    <div class="acc-c ab reveal">
+      <span style="font-size:2rem;display:block;margin-bottom:12px">🩺</span>
+      <h3>Diabetes Prediction</h3>
+      <p>Pima Indian Diabetes Dataset — 768 patients, 8 clinical features.</p>
+      <div class="blbl"><span>Accuracy</span><span>72.08%</span></div>
+      <div class="btrack"><div class="bfill" style="width:72%"></div></div>
+      <ul class="fl"><li>Glucose, Blood Pressure, BMI</li><li>Insulin, Skin Thickness</li><li>Age, Pregnancies, Pedigree</li></ul>
+    </div>
+    <div class="acc-c ar reveal">
+      <span style="font-size:2rem;display:block;margin-bottom:12px">❤️</span>
+      <h3>Heart Disease</h3>
+      <p>Cleveland Heart Disease Dataset — 303 patients, 13 cardiovascular features.</p>
+      <div class="blbl"><span>Accuracy</span><span>83.61%</span></div>
+      <div class="btrack"><div class="bfill" style="width:83%"></div></div>
+      <ul class="fl"><li>Chest pain type, Cholesterol</li><li>Resting BP, Max heart rate</li><li>ECG results, Thalassemia</li></ul>
+    </div>
+    <div class="acc-c at reveal">
+      <span style="font-size:2rem;display:block;margin-bottom:12px">🧠</span>
+      <h3>Parkinson's Disease</h3>
+      <p>Oxford Parkinson's Dataset — 195 voice recordings, 22 acoustic features.</p>
+      <div class="blbl"><span>Accuracy</span><span>94.87%</span></div>
+      <div class="btrack"><div class="bfill" style="width:94%"></div></div>
+      <ul class="fl"><li>MDVP:Fo, Fhi, Flo (Hz)</li><li>Jitter & Shimmer values</li><li>HNR, RPDE, DFA, PPE</li></ul>
+    </div>
+  </div>
+</section>
+
+<!-- PREDICT -->
+<section id="predict">
+  <span class="stag">Live Demo</span>
+  <h2 class="stitle">Try a Prediction</h2>
+  <p class="ssub">Enter patient values and get a real-time AI result. Make sure FastAPI server is running on port 8000.</p>
+  <div class="tabs">
+    <button class="tab td" onclick="showTab('d')">🩺 Diabetes</button>
+    <button class="tab"    onclick="showTab('h')">❤️ Heart Disease</button>
+    <button class="tab"    onclick="showTab('p')">🧠 Parkinson's</button>
+  </div>
+
+  <!-- DIABETES -->
+  <div class="panel active" id="pd">
+    <div class="pcard">
+      <h3>🩺 Diabetes Prediction</h3>
+      <p>Enter the patient's clinical measurements. Default values are from a sample patient record.</p>
+      <div class="fgrid">
+        <div class="field"><label>Pregnancies</label><input type="number" id="d0" value="6" min="0"/><div class="hint">Number of times pregnant</div></div>
+        <div class="field"><label>Glucose (mg/dL)</label><input type="number" id="d1" value="148"/><div class="hint">2hr plasma glucose</div></div>
+        <div class="field"><label>Blood Pressure</label><input type="number" id="d2" value="72"/><div class="hint">Diastolic (mmHg)</div></div>
+        <div class="field"><label>Skin Thickness</label><input type="number" id="d3" value="35"/><div class="hint">Triceps fold (mm)</div></div>
+        <div class="field"><label>Insulin (μU/mL)</label><input type="number" id="d4" value="0"/><div class="hint">2-hour serum insulin</div></div>
+        <div class="field"><label>BMI (kg/m²)</label><input type="number" id="d5" value="33.6" step="0.1"/></div>
+        <div class="field"><label>Diabetes Pedigree</label><input type="number" id="d6" value="0.627" step="0.001"/></div>
+        <div class="field"><label>Age (years)</label><input type="number" id="d7" value="50"/></div>
+      </div>
+      <button class="pbtn pbd" onclick="go('diabetes','d')">Analyze for Diabetes →</button>
+      <div class="loader" id="ld"><div class="spin"></div>Running model...</div>
+      <div class="res" id="rd"><div class="res-ico" id="id"></div><div><div class="rt" id="td"></div><div class="rd" id="dd"></div><div class="rc" id="cd"></div></div></div>
+    </div>
+  </div>
+
+  <!-- HEART -->
+  <div class="panel" id="ph">
+    <div class="pcard">
+      <h3>❤️ Heart Disease Prediction</h3>
+      <p>Enter cardiovascular measurements. Default values are a sample patient record.</p>
+      <div class="fgrid">
+        <div class="field"><label>Age</label><input type="number" id="h0" value="63"/></div>
+        <div class="field"><label>Sex</label><input type="number" id="h1" value="1" min="0" max="1"/><div class="hint">1=Male, 0=Female</div></div>
+        <div class="field"><label>Chest Pain (0-3)</label><input type="number" id="h2" value="3" min="0" max="3"/><div class="hint">0=typical…3=asymptomatic</div></div>
+        <div class="field"><label>Resting BP (mmHg)</label><input type="number" id="h3" value="145"/></div>
+        <div class="field"><label>Cholesterol (mg/dL)</label><input type="number" id="h4" value="233"/></div>
+        <div class="field"><label>Fasting BS &gt;120</label><input type="number" id="h5" value="1" min="0" max="1"/><div class="hint">1=yes, 0=no</div></div>
+        <div class="field"><label>Resting ECG (0-2)</label><input type="number" id="h6" value="0" min="0" max="2"/></div>
+        <div class="field"><label>Max Heart Rate</label><input type="number" id="h7" value="150"/></div>
+        <div class="field"><label>Exercise Angina</label><input type="number" id="h8" value="0" min="0" max="1"/><div class="hint">1=yes, 0=no</div></div>
+        <div class="field"><label>ST Depression</label><input type="number" id="h9" value="2.3" step="0.1"/></div>
+        <div class="field"><label>Slope (0-2)</label><input type="number" id="h10" value="0" min="0" max="2"/></div>
+        <div class="field"><label>Major Vessels (0-4)</label><input type="number" id="h11" value="0" min="0" max="4"/></div>
+        <div class="field"><label>Thal (0-3)</label><input type="number" id="h12" value="1" min="0" max="3"/></div>
+      </div>
+      <button class="pbtn pbh" onclick="go('heart','h')">Analyze for Heart Disease →</button>
+      <div class="loader" id="lh"><div class="spin"></div>Running model...</div>
+      <div class="res" id="rh"><div class="res-ico" id="ih"></div><div><div class="rt" id="th"></div><div class="rd" id="dh"></div><div class="rc" id="ch"></div></div></div>
+    </div>
+  </div>
+
+  <!-- PARKINSONS -->
+  <div class="panel" id="pp">
+    <div class="pcard">
+      <h3>🧠 Parkinson's Prediction</h3>
+      <p>Enter the 22 voice measurement features. Default values are from a sample voice recording.</p>
+      <div class="fgrid">
+        <div class="field"><label>MDVP:Fo (Hz)</label><input type="number" id="p0"  value="119.992"   step="0.001"/></div>
+        <div class="field"><label>MDVP:Fhi (Hz)</label><input type="number" id="p1"  value="157.302"   step="0.001"/></div>
+        <div class="field"><label>MDVP:Flo (Hz)</label><input type="number" id="p2"  value="74.997"    step="0.001"/></div>
+        <div class="field"><label>MDVP:Jitter%</label><input type="number" id="p3"  value="0.00784"   step="0.00001"/></div>
+        <div class="field"><label>MDVP:Jitter(Abs)</label><input type="number" id="p4"  value="0.00007"   step="0.00001"/></div>
+        <div class="field"><label>MDVP:RAP</label><input type="number" id="p5"  value="0.00370"   step="0.00001"/></div>
+        <div class="field"><label>MDVP:PPQ</label><input type="number" id="p6"  value="0.00554"   step="0.00001"/></div>
+        <div class="field"><label>Jitter:DDP</label><input type="number" id="p7"  value="0.01109"   step="0.00001"/></div>
+        <div class="field"><label>MDVP:Shimmer</label><input type="number" id="p8"  value="0.04374"   step="0.00001"/></div>
+        <div class="field"><label>MDVP:Shimmer(dB)</label><input type="number" id="p9"  value="0.426"     step="0.001"/></div>
+        <div class="field"><label>Shimmer:APQ3</label><input type="number" id="p10" value="0.02182"   step="0.00001"/></div>
+        <div class="field"><label>Shimmer:APQ5</label><input type="number" id="p11" value="0.03130"   step="0.00001"/></div>
+        <div class="field"><label>MDVP:APQ</label><input type="number" id="p12" value="0.02971"   step="0.00001"/></div>
+        <div class="field"><label>Shimmer:DDA</label><input type="number" id="p13" value="0.06545"   step="0.00001"/></div>
+        <div class="field"><label>NHR</label><input type="number" id="p14" value="0.02211"   step="0.00001"/></div>
+        <div class="field"><label>HNR</label><input type="number" id="p15" value="21.033"    step="0.001"/></div>
+        <div class="field"><label>RPDE</label><input type="number" id="p16" value="0.414783"  step="0.000001"/></div>
+        <div class="field"><label>DFA</label><input type="number" id="p17" value="0.815285"  step="0.000001"/></div>
+        <div class="field"><label>spread1</label><input type="number" id="p18" value="-4.813031" step="0.000001"/></div>
+        <div class="field"><label>spread2</label><input type="number" id="p19" value="0.266482"  step="0.000001"/></div>
+        <div class="field"><label>D2</label><input type="number" id="p20" value="2.301442"  step="0.000001"/></div>
+        <div class="field"><label>PPE</label><input type="number" id="p21" value="0.284654"  step="0.000001"/></div>
+      </div>
+      <button class="pbtn pbp" onclick="go('parkinsons','p')">Analyze for Parkinson's →</button>
+      <div class="loader" id="lp"><div class="spin"></div>Running model...</div>
+      <div class="res" id="rp"><div class="res-ico" id="ip"></div><div><div class="rt" id="tp"></div><div class="rd" id="dp"></div><div class="rc" id="cp"></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- HISTORY -->
+<section id="history">
+  <span class="stag">Records</span>
+  <h2 class="stitle">Patient History</h2>
+  <p class="ssub">All predictions saved automatically in your browser. Your data stays private on your device.</p>
+  <div class="htop">
+    <h3 id="hcount">0 predictions saved</h3>
+    <button class="clr-btn" onclick="clearHist()">🗑 Clear All</button>
+  </div>
+  <div id="hlist"></div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <span class="stag">About This Project</span>
+  <div class="about-g">
+    <div class="about-t reveal">
+      <h2>End-to-End ML Pipeline with FastAPI Backend</h2>
+      <p>This project demonstrates a complete machine learning pipeline — from raw clinical CSV datasets to a live REST API serving real-time predictions through this web interface.</p>
+      <p>Three Random Forest classifiers were trained on real medical datasets. Each model uses a scikit-learn Pipeline combining StandardScaler normalization and RandomForestClassifier, then saved with joblib as .pkl files.</p>
+      <p>FastAPI provides automatic input validation, structured JSON responses, and full Swagger documentation. This frontend connects directly to the API for live predictions.</p>
+      <div class="pills">
+        <span class="pill pb">Python 3.11</span><span class="pill pb">scikit-learn</span>
+        <span class="pill pt">FastAPI</span><span class="pill pt">Joblib / Pickle</span>
+        <span class="pill pg">Random Forest</span><span class="pill pg">StandardScaler</span>
+        <span class="pill pg">Pydantic v2</span><span class="pill pg">Uvicorn</span>
+      </div>
+    </div>
+    <div class="about-card reveal">
+      <h3>📊 Project Summary</h3>
+      <div class="mrow"><span class="ml">🩺 Diabetes Accuracy</span><span class="mv">72.08%</span></div>
+      <div class="mrow"><span class="ml">❤️ Heart Disease Accuracy</span><span class="mv">83.61%</span></div>
+      <div class="mrow"><span class="ml">🧠 Parkinson's Accuracy</span><span class="mv">94.87%</span></div>
+      <div class="mrow"><span class="ml">🌲 Trees per Model</span><span class="mv">100</span></div>
+      <div class="mrow"><span class="ml">📦 Model Format</span><span class="mv">joblib .pkl</span></div>
+      <div class="mrow"><span class="ml">🚀 Backend</span><span class="mv">FastAPI</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="flogo">Medi<span>Predict</span> AI</div>
+  <p>Built with Python · scikit-learn · FastAPI · joblib · Uvicorn</p>
+  <p>Random Forest · StandardScaler · Pydantic v2</p>
+  <div class="fwarn">⚠️ Educational purposes only — not a substitute for professional medical advice</div>
+</footer>
+
+<script>
+/* THEME */
+const th = localStorage.getItem('mp-theme')||'light';
+document.documentElement.setAttribute('data-theme',th);
+document.getElementById('tbtn').textContent = th==='dark'?'☀️':'🌙';
+function toggleTheme(){
+  const c=document.documentElement.getAttribute('data-theme');
+  const n=c==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',n);
+  localStorage.setItem('mp-theme',n);
+  document.getElementById('tbtn').textContent=n==='dark'?'☀️':'🌙';
+}
+
+/* MOBILE */
+function toggleMob(){document.getElementById('mmenu').classList.toggle('open')}
+function closeMob(){document.getElementById('mmenu').classList.remove('open')}
+
+/* TABS */
+function showTab(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('td','th','tp'));
+  document.getElementById('p'+id).classList.add('active');
+  const map={d:['td',0],h:['th',1],p:['tp',2]};
+  const [cls,idx]=map[id];
+  document.querySelectorAll('.tab')[idx].classList.add(cls);
+}
+
+/* HISTORY */
+let hist = JSON.parse(localStorage.getItem('mp-hist')||'[]');
+const NEG = ['No Diabetes','No Disease','Healthy'];
+const DIS = {diabetes:'Diabetes',heart:'Heart Disease',parkinsons:"Parkinson's"};
+
+function saveHist(disease,result,conf){
+  hist.unshift({id:Date.now(),disease,result,conf,time:new Date().toLocaleString()});
+  if(hist.length>60)hist=hist.slice(0,60);
+  localStorage.setItem('mp-hist',JSON.stringify(hist));
+  renderHist();
+}
+function clearHist(){
+  if(!confirm('Sab records delete karein?'))return;
+  hist=[];localStorage.removeItem('mp-hist');renderHist();
+}
+function renderHist(){
+  const el=document.getElementById('hlist');
+  const cnt=document.getElementById('hcount');
+  cnt.textContent=`${hist.length} prediction${hist.length!==1?'s':''} saved`;
+  if(!hist.length){
+    el.innerHTML=`<div class="hempty"><span>🗂️</span>No predictions yet. Try one above!</div>`;return;
+  }
+  const ico={Diabetes:'🩺','Heart Disease':'❤️',"Parkinson's":'🧠','No Diabetes':'🩺','No Disease':'❤️',Healthy:'🧠'};
+  el.innerHTML=`<div class="hlist">${hist.map(e=>`
+    <div class="hi">
+      <div style="font-size:1.4rem">${ico[e.result]||'🔬'}</div>
+      <div class="hinfo"><div class="hn">${DIS[e.disease]} Prediction</div><div class="hm">${e.time}</div></div>
+      <div class="hbadge ${NEG.includes(e.result)?'n':'p'}">${e.result}</div>
+      <div class="hc">${e.conf}</div>
+    </div>`).join('')}</div>`;
+}
+renderHist();
+
+/* PREDICT */
+async function go(disease,px){
+  const L=document.getElementById('l'+px);
+  const R=document.getElementById('r'+px);
+  R.classList.remove('on','pos','neg');
+  L.classList.add('on');
+  let body={};
+  try{
+    if(disease==='diabetes'){
+      ['Pregnancies','Glucose','BloodPressure','SkinThickness','Insulin','BMI','DiabetesPedigreeFunction','Age']
+        .forEach((k,i)=>body[k]=+document.getElementById('d'+i).value);
+    } else if(disease==='heart'){
+      ['age','sex','cp','trestbps','chol','fbs','restecg','thalach','exang','oldpeak','slope','ca','thal']
+        .forEach((k,i)=>body[k]=+document.getElementById('h'+i).value);
+    } else {
+      ['MDVP_Fo','MDVP_Fhi','MDVP_Flo','MDVP_Jitter','MDVP_Jitter_Abs','MDVP_RAP','MDVP_PPQ','Jitter_DDP',
+       'MDVP_Shimmer','MDVP_Shimmer_dB','Shimmer_APQ3','Shimmer_APQ5','MDVP_APQ','Shimmer_DDA',
+       'NHR','HNR','RPDE','DFA','spread1','spread2','D2','PPE']
+        .forEach((k,i)=>body[k]=+document.getElementById('p'+i).value);
+    }
+    const r=await fetch(`http://127.0.0.1:8000/predict/${disease}`,{
+      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)
+    });
+    const data=await r.json();
+    L.classList.remove('on');
+    const isPos=!NEG.includes(data.result);
+    R.classList.add('on',isPos?'pos':'neg');
+    document.getElementById('i'+px).textContent=isPos?'⚠️':'✅';
+    document.getElementById('t'+px).textContent=data.result;
+    document.getElementById('d'+px).textContent=isPos
+      ?'Signs of the condition detected. Please consult a qualified medical professional.'
+      :'No significant signs detected. Patient appears to be in the healthy range.';
+    document.getElementById('c'+px).textContent=`Confidence: ${data.confidence}  ·  Model Accuracy: ${data.model_accuracy}`;
+    saveHist(disease,data.result,data.confidence);
+  } catch(e){
+    L.classList.remove('on');
+    R.classList.add('on','pos');
+    document.getElementById('i'+px).textContent='🔌';
+    document.getElementById('t'+px).textContent='Server Not Connected';
+    document.getElementById('d'+px).textContent='Run: python -m uvicorn main:app --reload';
+    document.getElementById('c'+px).textContent='API must be running on http://127.0.0.1:8000';
+  }
+}
+
+/* SCROLL REVEAL */
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{
+  if(e.isIntersecting)e.target.classList.add('vis');
+}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
